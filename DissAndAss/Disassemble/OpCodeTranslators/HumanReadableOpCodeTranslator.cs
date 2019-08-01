@@ -110,7 +110,7 @@ namespace DissAndAss.Disassemble.OpCodeTranslators
 
         private string DecodeRND_Vx(Opcode opcode)
         {
-            return $"(RND V[{opcode.X:X1}]) && {opcode.KK:X2}";
+            return $"V[{opcode.X:X1}] = (RND V[{opcode.X:X1}]) && {opcode.KK:X2}";
         }
 
         private string DecodeDRW_Vx_Vy(Opcode opcode)
@@ -123,15 +123,15 @@ namespace DissAndAss.Disassemble.OpCodeTranslators
             switch (opcode.N)
             {
                 case 0x1:
-                    return $"V[{opcode.X:X1}] || V[{opcode.Y:X1}]";
+                    return $" V[{opcode.X:X1}] = V[{opcode.X:X1}] || V[{opcode.Y:X1}]";
                 case 0x2:
-                    return $"V[{opcode.X:X1}] && V[{opcode.Y:X1}]";
+                    return $"V[{opcode.X:X1}] = V[{opcode.X:X1}] && V[{opcode.Y:X1}]";
                 case 0x3:
-                    return $"V[{opcode.X:X1}] ^^ V[{opcode.Y:X1}]";
+                    return $"V[{opcode.X:X1}] = V[{opcode.X:X1}] ^^ V[{opcode.Y:X1}]";
                 case 0x4:
-                    return $"V[{opcode.X:X1}] += V[{opcode.Y:X1}], SetCarryFlag()";
+                    return $"V[{opcode.X:X1}] = V[{opcode.X:X1}] += V[{opcode.Y:X1}], SetCarryFlag()";
                 case 0x5:
-                    return $"V[{opcode.X:X1}] -= V[{opcode.Y:X1}], SetCarryFlag()";
+                    return $"V[{opcode.X:X1}] = V[{opcode.X:X1}] -= V[{opcode.Y:X1}], SetCarryFlag()";
                 case 0x6:
                     return $"V[{opcode.X:X1} *= 2, SetCarryFlag()";
                 case 0x7:
