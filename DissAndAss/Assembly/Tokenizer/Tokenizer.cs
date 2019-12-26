@@ -14,69 +14,143 @@ namespace DissAndAss.Assembly.Tokenizer
         public static List<TokenDefinition> TokenDefinitions = new List<TokenDefinition>();
         static Tokenizer()
         {
-            TokenDefinitions.Add(new TokenDefinition(TokenType.Comma, x=> x=="," ));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.Space, x => x == " "));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.K, x => x == "K"));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.IRgeister, x => x == "I"));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.IRange, x => x == "[I]"));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.DT, x => x == "DT"));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.ST, x => x == "ST"));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.Mnemonic, x => Mnemoics.Contains(x)));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.GenericRegister, x => 
+            TokenDefinitions.Add(new TokenDefinition(TokenType.Comma, x => new Tuple<bool, string>(x.StartsWith(","), ",")));
+            TokenDefinitions.Add(new TokenDefinition(TokenType.Space, x => new Tuple<bool, string>(x.StartsWith(" "), " ")));
+            TokenDefinitions.Add(new TokenDefinition(TokenType.K, x => new Tuple<bool, string>(x.StartsWith("K"), "K")));
+            TokenDefinitions.Add(new TokenDefinition(TokenType.IRgeister, x => new Tuple<bool, string>(x.StartsWith("I"), "I")));
+            TokenDefinitions.Add(new TokenDefinition(TokenType.IRange, x => new Tuple<bool, string>(x.StartsWith("[I]"), "[I]")));
+            TokenDefinitions.Add(new TokenDefinition(TokenType.DT, x => new Tuple<bool, string>(x.StartsWith("DT"), "DT")));
+            TokenDefinitions.Add(new TokenDefinition(TokenType.ST, x => new Tuple<bool, string>(x.StartsWith("ST"), "ST")));
+            TokenDefinitions.Add(new TokenDefinition(TokenType.Mnemonic, x =>
             {
-                if (x[0] == 'V' && x.Length <= 3 && x.Length >= 2)
+                foreach (string mnemonic in Mnemoics)
+                {
+                    if (x.StartsWith(mnemonic))
+                    {
+                        return new Tuple<bool, string>(true, mnemonic);
+                    }
+                }
+                return new Tuple<bool, string>(false, "");
+
+            }));
+            TokenDefinitions.Add(new TokenDefinition(TokenType.GenericRegister, x =>
+            {
+                var numeric = 0;
+
+                Regex regex = new Regex("^V[0-9a-fA-F]{1,2}");
+
+                Match match = regex.Match(x);
+
+                if (match.Success)
                 {
                     var number = x.Substring(1, x.Length - 1);
-                    var numberic = 0;
-                    var canConvertToHex = int.TryParse(number, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture, out numberic);
 
-                    if (canConvertToHex && numberic <= 15)
+                    var canConvertToHex = int.TryParse(number, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture, out numeric);
+
+                    if (canConvertToHex && numeric <= 15)
                     {
-                        return true;
+                        return new Tuple<bool, string>(true, match.Value);
                     }
-                    
 
                 }
-                return false;
-            
+                return new Tuple<bool, string>(false, match.Value);
+
             }));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.Comment, x => x.StartsWith("//")));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.HeximalData, x => 
+            TokenDefinitions.Add(new TokenDefinition(TokenType.Comment, x => 
             {
-                if (x.Length > 0 && x.Length < 4)
-                {
-                    var numberic = 0;
-                    var canConvertToHex = int.TryParse(x, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture, out numberic);
+                Regex regex = new Regex(@"^\//(.*)");
 
-                    if (canConvertToHex && numberic <= 4095)
+                Match match = regex.Match(x);
+
+                if (match.Success)
+                {
+                     return new Tuple<bool, string>(true, match.Value);
+                }
+                return new Tuple<bool, string>(false, match.Value);
+
+            }));
+            TokenDefinitions.Add(new TokenDefinition(TokenType.HeximalData, x =>
+            {
+                var numeric = 0;
+
+                Regex regex = new Regex("^[0-9a-fA-F]{1,3}");
+
+                Match match = regex.Match(x);
+                if (match.Success)
+                {
+                    var canConvertToHex = int.TryParse(x, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture, out numeric);
+
+                    if (canConvertToHex && numeric <= 4095)
                     {
-                        return true;
+                        return new Tuple<bool, string>(true, numeric.ToString());
                     }
 
 
                 }
-                return false;
-
+                return new Tuple<bool, string>(false, numeric.ToString());
 
             }));
 
         }
 
-
         public static List<Token> Tokenize(string line)
         {
-            var output = new List<Token>();
-            while (!string.IsNullOrWhiteSpace(line))
+            List<Token> output = new List<Token>();
+
+            string remainingText = line;
+
+            while (!string.IsNullOrWhiteSpace(remainingText))
             {
+                var match = FindMatch(remainingText);
 
+                if (match.IsMatch && match.TokenType != TokenType.Space)
+                {
+                    output.Add(new Token() { Type = match.TokenType, Value = match.Value });
+                    remainingText = match.RemainingText;
+                }
 
+                else if (match.TokenType == TokenType.Space)
+                {
+                    remainingText = remainingText.Substring(1);
+                }
 
+                else 
+                {
+                    //Create invalid token
+                    output.Add(CreateInvalidTokenMatch(remainingText));
+                    remainingText = "";
+                    //throw new Exception("Invalid token");
+                }
+              
             }
 
             output.Add(new Token() { Type = TokenType.SequenceEnd, Value = String.Empty });
 
             return output;
         }
+
+        private static TokenDefinition.TokenMatch FindMatch(string text)
+        {
+            foreach (TokenDefinition tokenDefinition in TokenDefinitions)
+            {
+                var match = tokenDefinition.MatchToken(text);
+                if (match.IsMatch)
+                    return match;
+            }
+
+            return new TokenDefinition.TokenMatch() { IsMatch = false };
+        }
+
+        private static Token CreateInvalidTokenMatch(string lqlText)
+        {
+            return new Token()
+            {    
+                Type = TokenType.Invalid,
+                Value = lqlText,
+            };
+
+        }
+
 
 
     }

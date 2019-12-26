@@ -7,33 +7,46 @@ namespace DissAndAss.Assembly
     public class TokenDefinition
     {
         private readonly TokenType _returnsTokenType;
-        private Func<string,bool> _matchAlgorithm;
+        private Func<string, Tuple<bool, string>> _matchAlgorithm;
 
-        public TokenDefinition(TokenType type, Func<string,bool> matchingAlgorithm)
+        public TokenDefinition(TokenType type, Func<string, Tuple<bool, string>> matchingAlgorithm)
         {
             _returnsTokenType = type;
             matchingAlgorithm = _matchAlgorithm;
         }
 
-        public Token MatchToken(string value,Func<string,bool> algorithm)
+        public TokenMatch MatchToken(string value)
         {
-            if (algorithm.Invoke(value))
+            Tuple<bool, string> algorithmResult = _matchAlgorithm.Invoke(value);
+
+            if (algorithmResult.Item1)
             {
-                return new Token()
+                return new TokenMatch()
                 {
-                    Type = _returnsTokenType,
-                    Value = value,
+                    IsMatch = true,
+                    TokenType = _returnsTokenType,
+                    Value = algorithmResult.Item2,
+                    RemainingText = value.Substring(algorithmResult.Item2.Length)
                 };
             }
             else
             {
-                return new Token()
+                return new TokenMatch()
                 {
-                    Type = TokenType.NotDefined,
-                    Value = value,
+                    IsMatch = false,
                 };
             }
         }
+
+
+        public class TokenMatch
+        {
+            public bool IsMatch { get; set; }
+            public TokenType TokenType { get; set; }
+            public string Value { get; set; }
+            public string RemainingText { get; set; }
+        }
+
 
     }
 }
