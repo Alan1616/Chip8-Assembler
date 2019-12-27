@@ -7,7 +7,7 @@ namespace DissAndAss.Assembly
     public static class OperationsSet
     {
         private static List<Operation> _operationSet = new List<Operation>();
-        public static Dictionary<string,Operation> OperationsMap { get; set; }
+        public static Dictionary<string, Operation> OperationsMap { get; set; } = new Dictionary<string, Operation>();
 
 
         static OperationsSet()

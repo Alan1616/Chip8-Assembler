@@ -19,6 +19,5 @@ namespace DissAndAss.Assembly
         IRange,
         Comment,
         SequenceEnd,
-
     }
 }

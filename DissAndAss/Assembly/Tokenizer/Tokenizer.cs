@@ -7,12 +7,12 @@ using System.Text.RegularExpressions;
 
 namespace DissAndAss.Assembly.Tokenizer
 {
-    public static class Tokenizer
+    public class Tokenizer : ITokenizer
     {
-        private static List<string> Mnemoics = OperationsSet.OperationsMap.Values.Select(x => x.Mnemonic).Distinct().ToList();
+        private List<string> Mnemoics = OperationsSet.OperationsMap.Values.Select(x => x.Mnemonic).Distinct().ToList();
 
-        public static List<TokenDefinition> TokenDefinitions = new List<TokenDefinition>();
-        static Tokenizer()
+        private List<TokenDefinition> TokenDefinitions = new List<TokenDefinition>();
+        public  Tokenizer()
         {
             TokenDefinitions.Add(new TokenDefinition(TokenType.Comma, x => new Tuple<bool, string>(x.StartsWith(","), ",")));
             TokenDefinitions.Add(new TokenDefinition(TokenType.Space, x => new Tuple<bool, string>(x.StartsWith(" "), " ")));
@@ -43,7 +43,7 @@ namespace DissAndAss.Assembly.Tokenizer
 
                 if (match.Success)
                 {
-                    var number = x.Substring(1, x.Length - 1);
+                    var number = match.Value.Substring(1);
 
                     var canConvertToHex = int.TryParse(number, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture, out numeric);
 
@@ -56,7 +56,7 @@ namespace DissAndAss.Assembly.Tokenizer
                 return new Tuple<bool, string>(false, match.Value);
 
             }));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.Comment, x => 
+            TokenDefinitions.Add(new TokenDefinition(TokenType.Comment, x =>
             {
                 Regex regex = new Regex(@"^\//(.*)");
 
@@ -64,7 +64,7 @@ namespace DissAndAss.Assembly.Tokenizer
 
                 if (match.Success)
                 {
-                     return new Tuple<bool, string>(true, match.Value);
+                    return new Tuple<bool, string>(true, match.Value);
                 }
                 return new Tuple<bool, string>(false, match.Value);
 
@@ -78,11 +78,11 @@ namespace DissAndAss.Assembly.Tokenizer
                 Match match = regex.Match(x);
                 if (match.Success)
                 {
-                    var canConvertToHex = int.TryParse(x, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture, out numeric);
+                    var canConvertToHex = int.TryParse(match.Value, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture, out numeric);
 
                     if (canConvertToHex && numeric <= 4095)
                     {
-                        return new Tuple<bool, string>(true, numeric.ToString());
+                        return new Tuple<bool, string>(true, match.Value);
                     }
 
 
@@ -90,10 +90,9 @@ namespace DissAndAss.Assembly.Tokenizer
                 return new Tuple<bool, string>(false, numeric.ToString());
 
             }));
-
         }
 
-        public static List<Token> Tokenize(string line)
+        public List<Token> Tokenize(string line)
         {
             List<Token> output = new List<Token>();
 
@@ -114,14 +113,14 @@ namespace DissAndAss.Assembly.Tokenizer
                     remainingText = remainingText.Substring(1);
                 }
 
-                else 
+                else
                 {
                     //Create invalid token
                     output.Add(CreateInvalidTokenMatch(remainingText));
                     remainingText = "";
                     //throw new Exception("Invalid token");
                 }
-              
+
             }
 
             output.Add(new Token() { Type = TokenType.SequenceEnd, Value = String.Empty });
@@ -129,7 +128,7 @@ namespace DissAndAss.Assembly.Tokenizer
             return output;
         }
 
-        private static TokenDefinition.TokenMatch FindMatch(string text)
+        private TokenDefinition.TokenMatch FindMatch(string text)
         {
             foreach (TokenDefinition tokenDefinition in TokenDefinitions)
             {
@@ -141,17 +140,15 @@ namespace DissAndAss.Assembly.Tokenizer
             return new TokenDefinition.TokenMatch() { IsMatch = false };
         }
 
-        private static Token CreateInvalidTokenMatch(string lqlText)
+        private Token CreateInvalidTokenMatch(string lqlText)
         {
             return new Token()
-            {    
+            {
                 Type = TokenType.Invalid,
                 Value = lqlText,
             };
 
         }
-
-
 
     }
 }

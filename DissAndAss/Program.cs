@@ -1,5 +1,6 @@
 ﻿
 using DissAndAss.Assembly;
+using DissAndAss.Assembly.Tokenizer;
 using DissAndAss.Disassemble;
 using System;
 using System.Linq;
@@ -32,8 +33,13 @@ namespace DissAndAss
 
             //}
 
-            Disassembler d1 = new Disassembler(args[0], args[2]);
-            d1.ProccessFile(args[1]);
+            //Disassembler d1 = new Disassembler(args[0], args[2]);
+            //d1.ProccessFile(args[1]);
+
+            Assembler a = new Assembler(new Tokenizer());
+            a.Compile();
+
+
             //Disassembler d1 = new Disassembler("Chip8 Picture.ch8", "--N");
             //d1.ProccessFile("HrDissasemble.txt");
             //Console.ReadKey();

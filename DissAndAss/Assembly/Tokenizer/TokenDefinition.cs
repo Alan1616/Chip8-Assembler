@@ -12,7 +12,7 @@ namespace DissAndAss.Assembly
         public TokenDefinition(TokenType type, Func<string, Tuple<bool, string>> matchingAlgorithm)
         {
             _returnsTokenType = type;
-            matchingAlgorithm = _matchAlgorithm;
+            _matchAlgorithm = matchingAlgorithm;
         }
 
         public TokenMatch MatchToken(string value)
