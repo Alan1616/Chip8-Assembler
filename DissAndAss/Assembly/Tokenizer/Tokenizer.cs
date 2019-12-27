@@ -9,21 +9,21 @@ namespace DissAndAss.Assembly.Tokenizer
 {
     public class Tokenizer : ITokenizer
     {
-        private List<string> Mnemoics = OperationsSet.OperationsMap.Values.Select(x => x.Mnemonic).Distinct().ToList();
+        private List<string> _mnemoics = OperationsSet.OperationsMap.Values.Select(x => x.Mnemonic).Distinct().ToList();
 
-        private List<TokenDefinition> TokenDefinitions = new List<TokenDefinition>();
+        private List<TokenDefinition> _tokenDefinitions = new List<TokenDefinition>();
         public  Tokenizer()
         {
-            TokenDefinitions.Add(new TokenDefinition(TokenType.Comma, x => new Tuple<bool, string>(x.StartsWith(","), ",")));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.Space, x => new Tuple<bool, string>(x.StartsWith(" "), " ")));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.K, x => new Tuple<bool, string>(x.StartsWith("K"), "K")));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.IRgeister, x => new Tuple<bool, string>(x.StartsWith("I"), "I")));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.IRange, x => new Tuple<bool, string>(x.StartsWith("[I]"), "[I]")));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.DT, x => new Tuple<bool, string>(x.StartsWith("DT"), "DT")));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.ST, x => new Tuple<bool, string>(x.StartsWith("ST"), "ST")));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.Mnemonic, x =>
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.Comma, x => new Tuple<bool, string>(x.StartsWith(","), ",")));
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.Space, x => new Tuple<bool, string>(x.StartsWith(" "), " ")));
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.K, x => new Tuple<bool, string>(x.StartsWith("K"), "K")));
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.IRgeister, x => new Tuple<bool, string>(x.StartsWith("I"), "I")));
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.IRange, x => new Tuple<bool, string>(x.StartsWith("[I]"), "[I]")));
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.DT, x => new Tuple<bool, string>(x.StartsWith("DT"), "DT")));
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.ST, x => new Tuple<bool, string>(x.StartsWith("ST"), "ST")));
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.Mnemonic, x =>
             {
-                foreach (string mnemonic in Mnemoics)
+                foreach (string mnemonic in _mnemoics)
                 {
                     if (x.StartsWith(mnemonic))
                     {
@@ -33,7 +33,7 @@ namespace DissAndAss.Assembly.Tokenizer
                 return new Tuple<bool, string>(false, "");
 
             }));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.GenericRegister, x =>
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.GenericRegister, x =>
             {
                 var numeric = 0;
 
@@ -56,7 +56,7 @@ namespace DissAndAss.Assembly.Tokenizer
                 return new Tuple<bool, string>(false, match.Value);
 
             }));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.Comment, x =>
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.Comment, x =>
             {
                 Regex regex = new Regex(@"^\//(.*)");
 
@@ -69,7 +69,7 @@ namespace DissAndAss.Assembly.Tokenizer
                 return new Tuple<bool, string>(false, match.Value);
 
             }));
-            TokenDefinitions.Add(new TokenDefinition(TokenType.HeximalData, x =>
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.HeximalData, x =>
             {
                 var numeric = 0;
 
@@ -130,7 +130,7 @@ namespace DissAndAss.Assembly.Tokenizer
 
         private TokenDefinition.TokenMatch FindMatch(string text)
         {
-            foreach (TokenDefinition tokenDefinition in TokenDefinitions)
+            foreach (TokenDefinition tokenDefinition in _tokenDefinitions)
             {
                 var match = tokenDefinition.MatchToken(text);
                 if (match.IsMatch)
@@ -140,12 +140,12 @@ namespace DissAndAss.Assembly.Tokenizer
             return new TokenDefinition.TokenMatch() { IsMatch = false };
         }
 
-        private Token CreateInvalidTokenMatch(string lqlText)
+        private Token CreateInvalidTokenMatch(string text)
         {
             return new Token()
             {
                 Type = TokenType.Invalid,
-                Value = lqlText,
+                Value = text,
             };
 
         }

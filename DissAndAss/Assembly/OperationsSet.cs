@@ -12,7 +12,7 @@ namespace DissAndAss.Assembly
 
         static OperationsSet()
         {
-            _operationSet.Add(new Operation { Representation = "00E0", Mnemonic = "SYS", HasSource = false, HasTarget = false, HasFreeData = true, FreeDataLength = 3 });
+            _operationSet.Add(new Operation { Representation = "0nnn", Mnemonic = "SYS", HasSource = false, HasTarget = false, HasFreeData = true, FreeDataLength = 3 });
             _operationSet.Add(new Operation { Representation = "00EE", Mnemonic = "CLS", HasSource = false, HasTarget = false, HasFreeData = false, });
             _operationSet.Add(new Operation { Representation = "1nnn", Mnemonic = "RET", HasSource = false, HasTarget = false, HasFreeData = false, });
             _operationSet.Add(new Operation { Representation = "2nnn", Mnemonic = "JP", HasSource = false, HasTarget = false, HasFreeData = true, FreeDataLength = 3});
