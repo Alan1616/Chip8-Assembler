@@ -2,7 +2,7 @@
 
 namespace DissAndAss.Assembly.Compiler
 {
-    public interface ICompiler
+    public interface ITokenToBinaryConverter
     {
         ushort[] Compile(List<List<Token>> lines);
     }

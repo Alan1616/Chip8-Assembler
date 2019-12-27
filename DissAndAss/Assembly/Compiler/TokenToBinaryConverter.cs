@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
 namespace DissAndAss.Assembly.Compiler
 {
-    public class Compiler : ICompiler
+    public class TokenToBinaryConverter : ITokenToBinaryConverter
     {
 
         public ushort[] Compile(List<List<Token>> lines)
@@ -64,38 +65,169 @@ namespace DissAndAss.Assembly.Compiler
 
             }
 
+            if (!IsLineStructureGood(line))
+            {
+                throw new Exception($"Syntax Error at line {linesCount}, check your line structure - [MNM, (OP1), (OP2), (OP3)]");
+            }
+
             bool IsSpecialOperand(Token token) => token.Type == TokenType.DT ||
                         token.Type == TokenType.IRange ||
                         token.Type == TokenType.IRgeister ||
                         token.Type == TokenType.ST ||
                         token.Type == TokenType.K;
 
-            //bool IsOperand(Token token) => token.Type == TokenType.DT ||
-            //    token.Type == TokenType.GenericRegister ||
-            //    token.Type == TokenType.HeximalData ||
-            //    token.Type == TokenType.IRange ||
-            //    token.Type == TokenType.IRgeister ||
-            //    token.Type == TokenType.ST ||
-            //    token.Type == TokenType.K;
-
             bool IsOperand(Token token) => token.Type == TokenType.GenericRegister ||
                 token.Type == TokenType.HeximalData;
-     
+
 
 
             // check for comma unless after first and there is only one or after last operation
 
+
+            List<Token> operands = line.Where(x => IsOperand(x)).ToList();
+            List<Token> registerOperands = operands.Where(x => x.Type == TokenType.GenericRegister).ToList();
+            List<Token> valueOperands = operands.Where(x => x.Type == TokenType.HeximalData).ToList();
+            List<Token> specialOperands = operands.Where(x => IsSpecialOperand(x)).ToList();
+
+
             var mnemonicMatchingOperations = OperationsSet.OperationsMap.Values.Where(x => x.Mnemonic == line[0].Value).ToList();
             int operandCount = line.Where(IsOperand).Count();
-            mnemonicMatchingOperations = mnemonicMatchingOperations.Where(x => x.OperandsCount == operandCount).ToList();
+            mnemonicMatchingOperations = mnemonicMatchingOperations.Where(x =>
+            {
+                var operandsMatch = x.OperandsCount == operands.Count;
+                var dataOperandsMatch = false;
+
+                if (x.HasFreeData && valueOperands.Count == 1 ) //add value is less or equal than max value
+                {
+                    dataOperandsMatch = true;
+                }
+
+                else if (!x.HasFreeData && valueOperands.Count == 0)
+                {
+                    dataOperandsMatch = true;
+                }
+
+
+                return operandsMatch && dataOperandsMatch;
+
+
+            }).ToList();
 
             if (mnemonicMatchingOperations.Count() <= 0)
             {
-                throw new Exception($"Syntax Error at line {linesCount}, cant match mnemonic operand count");
+                throw new Exception($"Syntax Error at line {linesCount}, cant match mnemonic with operand count");
             }
 
-            return new Opcode(0x00EA);
 
+            if (mnemonicMatchingOperations.Count > 1 )
+            {
+                throw new Exception("Dupa");
+            }
+
+            var matchedOperation = mnemonicMatchingOperations.First();
+
+
+            //if mnemonic LD do diffrent
+            if (matchedOperation.Mnemonic != "LD")
+            {
+                ushort code = 0x0000;
+
+                code = (ushort)(code | (matchedOperation.BaseValue ));
+
+                if (matchedOperation.HasSource)
+                {           
+                    ushort value = ushort.Parse(registerOperands[0].Value.Replace("V", String.Empty), System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+
+                    if (matchedOperation.Mnemonic == "JP" && value !=0)
+                    {
+                        throw new Exception("Cant jump from Register other Than V0");
+                    }
+
+                    code = (ushort)(code | (value << 8));
+                }
+
+                if (matchedOperation.HasTarget)
+                {
+                    ushort value = 0;
+
+                    if (matchedOperation.HasSource)
+                    {
+                         value = ushort.Parse(registerOperands[1].Value.Replace("V", String.Empty), System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                         code = (ushort)(code | (value << 4));
+                    }
+                    else
+                    {
+                        value = ushort.Parse(registerOperands[0].Value.Replace("V", String.Empty), System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                        code = (ushort)(code | (value << 8));
+                    }
+
+
+
+                }
+
+                if (matchedOperation.HasFreeData)
+                {
+
+                    ushort value = ushort.Parse(valueOperands[0].Value, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+
+                    value &=  matchedOperation.FreeDataMaxLength;
+
+                    code |= value ;
+                }
+
+                return new Opcode(code);
+
+            }
+
+            else
+            {
+
+            }
+            return new Opcode(0);
+
+
+        }
+
+        private bool IsActualOperand(Token token) => token.Type == TokenType.DT ||
+            token.Type == TokenType.GenericRegister ||
+            token.Type == TokenType.HeximalData ||
+            token.Type == TokenType.IRange ||
+            token.Type == TokenType.IRgeister ||
+            token.Type == TokenType.ST ||
+            token.Type == TokenType.K;
+
+        private bool IsLineStructureGood(List<Token> line)
+        {
+            var enumerator = line.GetEnumerator();
+
+            Token previous = new Token();
+           
+
+            while (enumerator.MoveNext())
+            {
+                var current = enumerator.Current;
+
+                if ( previous.Type == TokenType.Mnemonic && (!IsActualOperand(current) && current.Type != TokenType.SequenceEnd) )
+                {
+                    return false;
+                }
+
+                if ( IsActualOperand(previous) && ( current.Type != TokenType.Comma && current.Type != TokenType.SequenceEnd) )
+                {
+                    return false;
+                }
+
+                if ( previous.Type == TokenType.Comma && ( !IsActualOperand(current) && current.Type != TokenType.SequenceEnd) )
+                {
+                    return false;
+                }
+
+
+                previous = enumerator.Current;
+
+            }
+
+            return true;
 
         }
 

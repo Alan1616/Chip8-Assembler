@@ -11,11 +11,11 @@ namespace DissAndAss.Assembly
     public class Assembler
     {
         private ITokenizer _tokenizer;
-        private ICompiler _compiler;
+        private ITokenToBinaryConverter _compiler;
         //private List<string> _lines;
 
 
-        public Assembler(ITokenizer tokenizer, ICompiler compiler)
+        public Assembler(ITokenizer tokenizer, ITokenToBinaryConverter compiler)
         {
             _tokenizer = tokenizer;
             _compiler = compiler;

@@ -37,7 +37,7 @@ namespace DissAndAss
             //Disassembler d1 = new Disassembler(args[0], args[2]);
             //d1.ProccessFile(args[1]);
 
-            Assembler a = new Assembler(new Tokenizer(), new Compiler());
+            Assembler a = new Assembler(new Tokenizer(), new TokenToBinaryConverter());
             a.GenerateSourceFile();
 
 
