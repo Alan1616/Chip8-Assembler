@@ -7,6 +7,7 @@ namespace DissAndAss.Assembly
     public enum TokenType
     {
         Invalid,
+        Data,
         Space,
         Comma,
         HeximalData,
@@ -16,6 +17,8 @@ namespace DissAndAss.Assembly
         ST,
         DT,
         K,
+        F,
+        B,
         IRange,
         Comment,
         SequenceEnd,

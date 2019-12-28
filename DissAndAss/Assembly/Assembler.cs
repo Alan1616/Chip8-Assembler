@@ -62,7 +62,15 @@ namespace DissAndAss.Assembly
         {
             using (BinaryWriter bwriter = new BinaryWriter(File.Open(fileName, FileMode.OpenOrCreate),Encoding.BigEndianUnicode))
             {
-                //bwriter.Write(data);
+                foreach (ushort item in data)
+                {
+                    byte b1 = (byte)  ((0xFF00 & item) >> 8);
+                    byte b2 = (byte)  ((0x00FF & item) );
+
+                    bwriter.Write(b1);
+                    bwriter.Write(b2);
+                }
+                bwriter.Close();
             }
         }
 

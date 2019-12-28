@@ -37,12 +37,12 @@ namespace DissAndAss
             //Disassembler d1 = new Disassembler(args[0], args[2]);
             //d1.ProccessFile(args[1]);
 
-            Assembler a = new Assembler(new Tokenizer(), new TokenToBinaryConverter());
-            a.GenerateSourceFile();
+            //Assembler a = new Assembler(new Tokenizer(), new TokenToBinaryConverter());
+            //a.GenerateSourceFile();
 
 
-            //Disassembler d1 = new Disassembler("Chip8 Picture.ch8", "--N");
-            //d1.ProccessFile("HrDissasemble.txt");
+            Disassembler d1 = new Disassembler("binaryOutput.c8", "-N");
+            d1.ProccessFile("AssembledAgain.txt");
             //Console.ReadKey();
         }
     }

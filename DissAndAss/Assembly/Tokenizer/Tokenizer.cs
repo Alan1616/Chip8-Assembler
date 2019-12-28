@@ -21,6 +21,8 @@ namespace DissAndAss.Assembly.Tokenizer
             _tokenDefinitions.Add(new TokenDefinition(TokenType.IRange, x => new Tuple<bool, string>(x.StartsWith("[I]"), "[I]")));
             _tokenDefinitions.Add(new TokenDefinition(TokenType.DT, x => new Tuple<bool, string>(x.StartsWith("DT"), "DT")));
             _tokenDefinitions.Add(new TokenDefinition(TokenType.ST, x => new Tuple<bool, string>(x.StartsWith("ST"), "ST")));
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.F, x => new Tuple<bool, string>(x.StartsWith("(F)"), "(F)")));
+            _tokenDefinitions.Add(new TokenDefinition(TokenType.B, x => new Tuple<bool, string>(x.StartsWith("(B)"), "(B)")));
             _tokenDefinitions.Add(new TokenDefinition(TokenType.Mnemonic, x =>
             {
                 foreach (string mnemonic in _mnemoics)
@@ -90,6 +92,7 @@ namespace DissAndAss.Assembly.Tokenizer
                 return new Tuple<bool, string>(false, numeric.ToString());
 
             }));
+       
         }
 
         public List<Token> Tokenize(string line)
@@ -116,7 +119,7 @@ namespace DissAndAss.Assembly.Tokenizer
                 else
                 {
                     //Create invalid token
-                    output.Add(CreateInvalidTokenMatch(remainingText));
+                    output.Add(CreateInvalidToken(remainingText));
                     remainingText = "";
                     //throw new Exception("Invalid token");
                 }
@@ -140,7 +143,7 @@ namespace DissAndAss.Assembly.Tokenizer
             return new TokenDefinition.TokenMatch() { IsMatch = false };
         }
 
-        private Token CreateInvalidTokenMatch(string text)
+        private Token CreateInvalidToken(string text)
         {
             return new Token()
             {
