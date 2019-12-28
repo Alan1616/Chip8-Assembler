@@ -12,7 +12,26 @@ namespace DissAndAss
     {
         static void Main(string[] args)
         {
-            //Dissasembler.exe source.c8 destination.txt--Param
+            //Dissasembler.exe source.c8 destination.txt --Param
+
+            //if (String.IsNullOrEmpty(args[0]))
+            //{
+            //    Console.WriteLine("No source specified");
+            //}
+
+            //if (String.IsNullOrEmpty(args[1]))
+            //{
+            //    Console.WriteLine("No Destination specified");
+            //}
+
+
+            //if (String.IsNullOrEmpty(args[2]))
+            //{
+            //    args[1] = "--N";
+            //}
+
+
+
 
             //if (args[2] == "A")
             //{
@@ -31,18 +50,18 @@ namespace DissAndAss
             //        throw new FormatException("your format should be filename.txt");
             //    }
 
-
             //}
 
             //Disassembler d1 = new Disassembler(args[0], args[2]);
             //d1.ProccessFile(args[1]);
 
             //Assembler a = new Assembler(new Tokenizer(), new TokenToBinaryConverter());
-            //a.GenerateSourceFile();
+            ////a.GenerateSourceFile(args[0],args[1]);
+            //a.GenerateBinaryFile("ass.txt", "testingDissasembly.c8");
 
 
-            Disassembler d1 = new Disassembler("binaryOutput.c8", "-N");
-            d1.ProccessFile("AssembledAgain.txt");
+            Disassembler d1 = new Disassembler("testingDissasembly.c8", "-N");
+            d1.ProccessFile("ReassmbledWithComments.txt");
             //Console.ReadKey();
         }
     }

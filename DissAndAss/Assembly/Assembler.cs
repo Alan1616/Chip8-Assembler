@@ -22,18 +22,17 @@ namespace DissAndAss.Assembly
         }
 
 
-        public void GenerateSourceFile()
+        public void GenerateBinaryFile(string sourceFile, string destinationFile)
         {
             List<string> lines = new List<string>();
             List<List<Token>> linesByTokens = new List<List<Token>>();
 
             try
             {
-                 lines = LoadLines("ass.txt");
+                 lines = LoadLines(sourceFile);
             }
             catch (Exception ex)
             {
-
                 Console.WriteLine(ex.Message);
             }
 
@@ -44,12 +43,10 @@ namespace DissAndAss.Assembly
                 linesByTokens.Add(tokens);
             }
 
-            ushort[] bytes = _compiler.Compile(linesByTokens);
-
-            var fileName = "binaryOutput.c8";
             try
             {
-                WriteByteDataToFile(fileName, bytes);
+                ushort[] bytes = _compiler.Compile(linesByTokens);
+                WriteByteDataToFile(destinationFile, bytes);
             }
             catch (Exception ex)
             {
@@ -76,11 +73,8 @@ namespace DissAndAss.Assembly
 
         private List<string> LoadLines(string fileName)
         {
-
             return File.ReadAllLines(fileName).ToList();        
         }
-
-
 
     }
 }

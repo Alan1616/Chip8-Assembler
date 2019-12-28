@@ -177,7 +177,7 @@ namespace DissAndAss.Disassemble.OpCodeTranslators
                 case 0x29:
                     return $"LD (F), V{opcode.X:X1}";
                 case 0x33:
-                    return $"LD (B), V{opcode.Y:X1}";
+                    return $"LD (B), V{opcode.X:X1}";
                 case 0x55:
                     return $"LD [I], V{opcode.X:X1}";
                 case 0x65:

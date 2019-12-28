@@ -9,7 +9,7 @@ namespace DissAndAss.Assembly.Tokenizer
 {
     public class Tokenizer : ITokenizer
     {
-        private List<string> _mnemoics = OperationsSet.OperationsMap.Values.Select(x => x.Mnemonic).Distinct().ToList();
+        private List<string> _mnemoics = OperationsSet.OperationDefinitionsSet.Select(x => x.Mnemonic).Distinct().ToList();
 
         private List<TokenDefinition> _tokenDefinitions = new List<TokenDefinition>();
         public  Tokenizer()
@@ -75,14 +75,14 @@ namespace DissAndAss.Assembly.Tokenizer
             {
                 var numeric = 0;
 
-                Regex regex = new Regex("^[0-9a-fA-F]{1,3}");
+                Regex regex = new Regex("^[0-9a-fA-F]{1,4}");
 
                 Match match = regex.Match(x);
                 if (match.Success)
                 {
                     var canConvertToHex = int.TryParse(match.Value, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture, out numeric);
 
-                    if (canConvertToHex && numeric <= 4095)
+                    if (canConvertToHex && numeric <= 0xFFFF)
                     {
                         return new Tuple<bool, string>(true, match.Value);
                     }
@@ -111,17 +111,15 @@ namespace DissAndAss.Assembly.Tokenizer
                     remainingText = match.RemainingText;
                 }
 
-                else if (match.TokenType == TokenType.Space)
+                else if (match.IsMatch && match.TokenType == TokenType.Space)
                 {
                     remainingText = remainingText.Substring(1);
                 }
 
                 else
                 {
-                    //Create invalid token
                     output.Add(CreateInvalidToken(remainingText));
                     remainingText = "";
-                    //throw new Exception("Invalid token");
                 }
 
             }
@@ -131,7 +129,7 @@ namespace DissAndAss.Assembly.Tokenizer
             return output;
         }
 
-        private TokenDefinition.TokenMatch FindMatch(string text)
+        private TokenMatch FindMatch(string text)
         {
             foreach (TokenDefinition tokenDefinition in _tokenDefinitions)
             {
@@ -140,7 +138,7 @@ namespace DissAndAss.Assembly.Tokenizer
                     return match;
             }
 
-            return new TokenDefinition.TokenMatch() { IsMatch = false };
+            return new TokenMatch() { IsMatch = false };
         }
 
         private Token CreateInvalidToken(string text)

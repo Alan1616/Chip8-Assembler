@@ -12,11 +12,11 @@ namespace DissAndAss.Disassemble
         private const int startingPC = 512;
         private List<byte> binaryCode = new List<byte>();
         private List<string> assemblyData = new List<string>();
-        IOpCodeTranslator OpCodeTranslator;
+        private IOpCodeTranslator _opCodeTranslator;
 
         public Disassembler(string filePath, string translatorParameter)
         {
-            OpCodeTranslator = OpCodeTranslatorFactory.GetTranslator(translatorParameter);
+            _opCodeTranslator = OpCodeTranslatorFactory.GetTranslator(translatorParameter);
 
             try
             {
@@ -37,7 +37,7 @@ namespace DissAndAss.Disassemble
                 ushort opcodeNumeric = (ushort)(binaryCode[i] << 8 | binaryCode[i + 1]);
                 Opcode opcode = new Opcode(opcodeNumeric);
 
-                string mnemonic = OpCodeTranslator.TranslateOpcode(opcode);
+                string mnemonic = _opCodeTranslator.TranslateOpcode(opcode);
                 assemblyData.Add($"{startingPC + i:X3}  {opcode.FullCode:X4}    {mnemonic}");
             }
 

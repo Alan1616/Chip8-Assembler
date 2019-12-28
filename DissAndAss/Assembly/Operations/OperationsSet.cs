@@ -7,13 +7,11 @@ namespace DissAndAss.Assembly
     public static class OperationsSet
     {
         private static List<OperationDefinition> _operationDefinitionSet = new List<OperationDefinition>();
-        public static Dictionary<string, OperationDefinition> OperationsMap { get; set; } = new Dictionary<string, OperationDefinition>();
-
+        public static List<OperationDefinition> OperationDefinitionsSet { get => _operationDefinitionSet; }
 
         static OperationsSet()
         {
-            // It think to be more specific with c8 HasSource and HasTarget should be other way around but i will keep it this way.
-
+            // To be more specific with c8 documentation fields HasSource and HasTarget should be other way around.
 
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "0nnn", Mnemonic = "SYS", HasSource = false, HasTarget = false, HasFreeData = true, FreeDataMaxLength = 0xFFF,
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.SequenceEnd } });
@@ -117,10 +115,8 @@ namespace DissAndAss.Assembly
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "Fx65", Mnemonic = "LD", HasSource = true, HasTarget = false, HasFreeData = false, 
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.IRange, TokenType.SequenceEnd } });
 
-            foreach (var operation in _operationDefinitionSet)
-            {
-                OperationsMap.Add(operation.Representation, operation);
-            }
+            _operationDefinitionSet.Add(new OperationDefinition { Representation = "0000", Mnemonic = "DATA", HasSource = false, HasTarget = false, HasFreeData = true, FreeDataMaxLength = 0xFFFF, 
+                AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.HeximalData, TokenType.SequenceEnd } });
         }
 
 
