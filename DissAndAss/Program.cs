@@ -14,54 +14,52 @@ namespace DissAndAss
         {
             //Dissasembler.exe source.c8 destination.txt --Param
 
-            //if (String.IsNullOrEmpty(args[0]))
-            //{
-            //    Console.WriteLine("No source specified");
-            //}
 
-            //if (String.IsNullOrEmpty(args[1]))
-            //{
-            //    Console.WriteLine("No Destination specified");
-            //}
+            if (args.Length <=0)
+            {
+                throw new Exception("No source specified");
+            }
+
+            if (args.Length <= 1)
+            {
+                throw new Exception("No Destination specified");
+            }
+            //ass.txt assembledTest --A
+
+            string parameter = "--N";
+
+            if (args.Length == 3)
+            {
+                parameter = args[2];
+            }
+
+            if (args.Length > 3)
+            {
+                throw new Exception("Use of undefined parameters");
+            }
 
 
-            //if (String.IsNullOrEmpty(args[2]))
-            //{
-            //    args[1] = "--N";
-            //}
+            if (parameter == "--A")
+            {
+
+                Assembler a = new Assembler(new Tokenizer(), new TokenToBinaryConverter());
+                a.GenerateBinaryFile(args[0], args[1]);
+            }    
+            else
+            {
+                Disassembler d1 = new Disassembler(args[0], parameter);
+                d1.ProccessFile(args[1]);
+            }
 
 
-
-
-            //if (args[2] == "A")
-            //{
-
-            //    if (args[1].Count(x => x == '.') == 1)
-            //    {
-            //        if (args[1].Split('.').ToArray()[1].Equals("txt"))
-            //        {
-            //            Assembler a1 = new Assembler();
-            //            a1.AssembleToFile();
-            //        }
-            //    }
-
-            //    else
-            //    {
-            //        throw new FormatException("your format should be filename.txt");
-            //    }
-
-            //}
-
-            //Disassembler d1 = new Disassembler(args[0], args[2]);
-            //d1.ProccessFile(args[1]);
 
             //Assembler a = new Assembler(new Tokenizer(), new TokenToBinaryConverter());
             ////a.GenerateSourceFile(args[0],args[1]);
             //a.GenerateBinaryFile("ass.txt", "testingDissasembly.c8");
 
 
-            Disassembler d1 = new Disassembler("testingDissasembly.c8", "-N");
-            d1.ProccessFile("ReassmbledWithComments.txt");
+            //Disassembler d1 = new Disassembler("testingDissasembly.c8", "-N");
+            //d1.ProccessFile("ReassmbledWithComments.txt");
             //Console.ReadKey();
         }
     }

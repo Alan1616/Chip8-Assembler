@@ -28,7 +28,6 @@ namespace DissAndAss.Assembly.Compiler
                     continue;
                 }
 
-
                 ushort currentOpcode = ConvertLineToBinaryData(lineWithoutComments, linesCount);
                 bytes.Add(currentOpcode);
             }

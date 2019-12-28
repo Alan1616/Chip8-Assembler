@@ -57,7 +57,7 @@ namespace DissAndAss.Assembly
 
         private void WriteByteDataToFile(string fileName, ushort[] data)
         {
-            using (BinaryWriter bwriter = new BinaryWriter(File.Open(fileName, FileMode.OpenOrCreate),Encoding.BigEndianUnicode))
+            using (BinaryWriter bwriter = new BinaryWriter(File.Open(fileName, FileMode.Create),Encoding.BigEndianUnicode))
             {
                 foreach (ushort item in data)
                 {
