@@ -14,7 +14,7 @@ namespace DissAndAss.Assembly
             // To be more specific with c8 documentation fields HasSource and HasTarget should be other way around.
 
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "0nnn", Mnemonic = "SYS", HasSource = false, HasTarget = false, HasFreeData = true, FreeDataMaxLength = 0xFFF,
-                AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.SequenceEnd } });
+                AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.HeximalData, TokenType.SequenceEnd } });
 
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "00E0", Mnemonic = "CLS", HasSource = false, HasTarget = false, HasFreeData = false,
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.SequenceEnd } });
@@ -76,7 +76,7 @@ namespace DissAndAss.Assembly
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "Annn", Mnemonic = "LD", HasSource = false, HasTarget = false, HasFreeData = true, FreeDataMaxLength = 0xFFF, 
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.IRgeister, TokenType.Comma, TokenType.HeximalData, TokenType.SequenceEnd } });
 
-            _operationDefinitionSet.Add(new OperationDefinition { Representation = "Bnnn", Mnemonic = "JP", HasSource = false, HasTarget = false, HasFreeData = true, FreeDataMaxLength = 0xFFF, 
+            _operationDefinitionSet.Add(new OperationDefinition { Representation = "Bnnn", Mnemonic = "JP", HasSource = true, HasTarget = false, HasFreeData = true, FreeDataMaxLength = 0xFFF, 
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.HeximalData, TokenType.SequenceEnd } });
 
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "Cxkk", Mnemonic = "RND", HasSource = true, HasTarget = false, HasFreeData = true, FreeDataMaxLength = 0xFF, 

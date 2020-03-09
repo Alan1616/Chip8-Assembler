@@ -19,10 +19,7 @@ namespace DissAndAss.Assembly.Compiler
 
                 linesCount++;
 
-                var lineWithoutComments = GetLineWithoutComments(line);
-
-                // Temporary solution for ignore only comment and blank lines
-                // There always will be sequence end so it doesent count as normal token.
+                var lineWithoutComments = GetLineWithoutComments(line);             
                 if (lineWithoutComments.Count <= 1)
                 {
                     continue;
@@ -93,7 +90,7 @@ namespace DissAndAss.Assembly.Compiler
             if (matchedOperation.HasFreeData)
             {
 
-                ushort value = ushort.Parse(valueOperands[0].Value, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+                uint value = uint.Parse(valueOperands[0].Value, System.Globalization.NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 
                 if (value > matchedOperation.FreeDataMaxLength )
                 {
@@ -102,7 +99,7 @@ namespace DissAndAss.Assembly.Compiler
 
                 value &=  matchedOperation.FreeDataMaxLength;
 
-                code |= value ;
+                code |= (ushort)value ;
             }
 
             return code;
