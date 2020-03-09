@@ -44,7 +44,7 @@ namespace DissAndAss.Assembly
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.HeximalData, TokenType.SequenceEnd } });
 
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "8xy0", Mnemonic = "LD", HasSource = true, HasTarget = true, HasFreeData = false, 
-                AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.SequenceEnd } });
+                AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.GenericRegister, TokenType.SequenceEnd } });
 
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "8xy1", Mnemonic = "OR", HasSource = true, HasTarget = true, HasFreeData = false, 
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.GenericRegister, TokenType.SequenceEnd } });
@@ -62,15 +62,15 @@ namespace DissAndAss.Assembly
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.GenericRegister, TokenType.SequenceEnd } });
 
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "8xy6", Mnemonic = "SHR", HasSource = true, HasTarget = false, HasFreeData = false, 
-                AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.GenericRegister, TokenType.SequenceEnd } });
+                AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.SequenceEnd } });
 
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "8xy7", Mnemonic = "SUBN", HasSource = true, HasTarget = true, HasFreeData = false, 
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.GenericRegister, TokenType.SequenceEnd } });
 
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "8xyE", Mnemonic = "SHL", HasSource = true, HasTarget = false, HasFreeData = false, 
-                AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.GenericRegister, TokenType.SequenceEnd } });
+                AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.SequenceEnd } });
 
-            _operationDefinitionSet.Add(new OperationDefinition { Representation = "9xy0", Mnemonic = "SHL", HasSource = true, HasTarget = true, HasFreeData = false, 
+            _operationDefinitionSet.Add(new OperationDefinition { Representation = "9xy0", Mnemonic = "SNE", HasSource = true, HasTarget = true, HasFreeData = false, 
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.GenericRegister, TokenType.SequenceEnd } });
 
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "Annn", Mnemonic = "LD", HasSource = false, HasTarget = false, HasFreeData = true, FreeDataMaxLength = 0xFFF, 

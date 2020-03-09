@@ -24,7 +24,7 @@ namespace DissAndAss.Tests
         //[Trait("Category", "SkipWhenLiveUnitTesting")]
         public void Compile_ShouldThrowExceptionWhenOperationWasNotMatched()
         {
-            // Assert
+            // Arrange
             var lines = new List<Token> { new Token() { Type = TokenType.Comma, Value = "," }, new Token() { Type = TokenType.GenericRegister, Value = "C" } };
             List<List<Token>> subject = new List<List<Token>> { lines };
 
@@ -36,7 +36,7 @@ namespace DissAndAss.Tests
         //[Trait("Category", "SkipWhenLiveUnitTesting")]
         public void Compile_ShouldThrowExceptionWhenSyntaxErrorWasDetected()
         {
-            // Assert
+            // Arrange
             var lines = new List<Token> { new Token() { Type = TokenType.Comma, Value = "," }, new Token() { Type = TokenType.GenericRegister, Value = "C" }, new Token() { Type = TokenType.Invalid, Value = "-ADDx" },  };
             List<List<Token>> subject = new List<List<Token>> { lines };
 
@@ -47,7 +47,7 @@ namespace DissAndAss.Tests
         [Fact]
         public void Compile_ShouldThrowExceptionWhenJumpingFromWrongRegister()
         {
-            // Assert
+            // Arrange
             var lines = new List<Token>
             {
                 new Token() { Type = TokenType.Mnemonic, Value = "JP" },
@@ -64,9 +64,11 @@ namespace DissAndAss.Tests
         }
 
         [Fact]
+        [Trait("TestCategory", "")]
+        [Trait("Category", "")]
         public void Compile_ShouldThrowExceptionWhenExceedingFreeDataMaxLength()
         {
-            // Assert
+            // Arrange
             var lines = new List<Token>
             {
                 new Token() { Type = TokenType.Mnemonic, Value = "JP" },
@@ -84,11 +86,9 @@ namespace DissAndAss.Tests
 
 
         [Fact]
-        [Trait("TestCategory", "")]
-        [Trait("Category", "")]
         public void Compile_ShouldReturnUShortArrayWithProperInput()
         {
-            // Assert
+            // Arrange
             var lines = new List<Token> { new Token() { Type = TokenType.Mnemonic, Value = "JP" }, new Token() { Type = TokenType.HeximalData, Value = "123" }, new Token() { Type = TokenType.SequenceEnd, Value = "" } };
 
             List<List<Token>> subject = new List<List<Token>> { lines };
@@ -103,7 +103,7 @@ namespace DissAndAss.Tests
         [Fact]
         public void Compile_ShouldOmitComments()
         {
-            // Assert
+            // Arrange
             var lines = new List<Token> 
             {
                 new Token() { Type = TokenType.Comment, Value = "!@#!#asdadQ@eawewaeqweqeq" },
@@ -128,7 +128,7 @@ namespace DissAndAss.Tests
         [Fact]
         public void Compile_ShouldOmitLinesContainingOnlyComments()
         {
-            // Assert
+            // Arrange
             var lines = new List<Token>
             {
                 new Token() { Type = TokenType.Comment, Value = "!@#!#asdadQ@eawewaeqweqeq" },
@@ -146,10 +146,9 @@ namespace DissAndAss.Tests
         }
 
         [Fact]
-        [MemberData(nameof(TestData))]
-        public void Compile_GivenMultipleOperationsShouldAssembleProperly()
+        public void Compile_GivenMultipleOperationsShouldAssembleCorrectly()
         {
-            // Assert
+            // Arrange 
             var l0 = new List<Token>
             {
                 new Token() { Type = TokenType.Comment, Value = "!@#!#asdadQ@eawewaeqweqeq" },
@@ -190,15 +189,11 @@ namespace DissAndAss.Tests
             Assert.True(output[0] == expected0 && output[1] == expected1 && output[2] == expected2);
         }
 
-
-
-
-
         [Theory]
         [MemberData (nameof(TestData))]
-        public void Compile_ShouldAssembleAllOperationsProperly(ushort expected, TestLineBuilder line)
+        public void Compile_ShouldAssembleAllOperationsCorrectly(ushort expected, TestLineBuilder line)
         {
-            // Assert
+            // Arrange
 
             List<List<Token>> subject = new List<List<Token>> { line.Build().ToList() };
 
@@ -222,7 +217,6 @@ namespace DissAndAss.Tests
                 new TestTokenBuilder(new Token() { Type = TokenType.HeximalData, Value = "F1D" }),
                 new TestTokenBuilder(new Token() { Type = TokenType.SequenceEnd, Value = "" }),
             })};
-
 
             yield return new object[] { (ushort) 0x00E0,new TestLineBuilder(new List<TestTokenBuilder>()
             {
@@ -294,6 +288,153 @@ namespace DissAndAss.Tests
                 new TestTokenBuilder( new Token() { Type = TokenType.HeximalData, Value = "4F" }),
                 new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
             })};
+
+            yield return new object[] { (ushort) 0x85E0,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "LD" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V5" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "VE" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0x8131,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "OR" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V1" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V3" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0x8792,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "AND" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V7" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V9" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0x8253,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "XOR" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V2" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V5" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0x8154,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "ADD" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V1" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V5" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0x8EE5,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "SUB" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "VE" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "VE" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+
+            yield return new object[] { (ushort) 0x8706,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "SHR" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V7" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0x8357,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "SUBN" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V3" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V5" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0x870E,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "SHL" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V7" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0x91F0,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "SNE" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V1" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "VF" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0xAE1F,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "LD" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.IRgeister, Value = "I" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.HeximalData, Value = "E1F" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0xBFFF,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "JP" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V0" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.HeximalData, Value = "FFF" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0xC4FF,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "RND" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V4" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.HeximalData, Value = "FF" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0xD4E6,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "DRW" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V4" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "VE" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.Comma, Value = "," }),
+                new TestTokenBuilder( new Token() { Type = TokenType.HeximalData, Value = "6" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0xE79E,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "SKP" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V7" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+            yield return new object[] { (ushort) 0xE7A1,new TestLineBuilder(new List<TestTokenBuilder>()
+            {
+                new TestTokenBuilder( new Token() { Type = TokenType.Mnemonic, Value = "SKNP" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.GenericRegister, Value = "V7" }),
+                new TestTokenBuilder( new Token() { Type = TokenType.SequenceEnd, Value = "" }),
+            })};
+
+
+
+
+            //AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.HeximalData, TokenType.SequenceEnd } });
+
+
+
 
         }
 
