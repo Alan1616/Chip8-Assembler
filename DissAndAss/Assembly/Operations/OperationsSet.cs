@@ -94,6 +94,9 @@ namespace DissAndAss.Assembly
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "Fx07", Mnemonic = "LD", HasSource = true, HasTarget = false, HasFreeData = false, 
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.DT, TokenType.SequenceEnd } });
 
+             _operationDefinitionSet.Add(new OperationDefinition { Representation = "Fx0A", Mnemonic = "LD", HasSource = true, HasTarget = false, HasFreeData = false, 
+                AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.GenericRegister, TokenType.Comma, TokenType.K, TokenType.SequenceEnd } });
+
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "Fx15", Mnemonic = "LD", HasSource = true, HasTarget = false, HasFreeData = false, 
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.DT, TokenType.Comma, TokenType.GenericRegister, TokenType.SequenceEnd } });
 
@@ -103,10 +106,10 @@ namespace DissAndAss.Assembly
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "Fx1E", Mnemonic = "ADD", HasSource = true, HasTarget = false, HasFreeData = false, 
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.IRgeister, TokenType.Comma, TokenType.GenericRegister, TokenType.SequenceEnd } });
 
-            _operationDefinitionSet.Add(new OperationDefinition { Representation = "Fx29", Mnemonic = "LD", HasSource = true, HasTarget = false, HasFreeData = false, FreeDataMaxLength = 0xF, 
+            _operationDefinitionSet.Add(new OperationDefinition { Representation = "Fx29", Mnemonic = "LD", HasSource = true, HasTarget = false, HasFreeData = false,  
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.F, TokenType.Comma, TokenType.GenericRegister, TokenType.SequenceEnd } });
 
-            _operationDefinitionSet.Add(new OperationDefinition { Representation = "Fx33", Mnemonic = "LD", HasSource = true, HasTarget = false, HasFreeData = false, FreeDataMaxLength = 0xF, 
+            _operationDefinitionSet.Add(new OperationDefinition { Representation = "Fx33", Mnemonic = "LD", HasSource = true, HasTarget = false, HasFreeData = false, 
                 AssocietedTokenSet = new List<TokenType>() { TokenType.Mnemonic, TokenType.B, TokenType.Comma, TokenType.GenericRegister, TokenType.SequenceEnd } });
 
             _operationDefinitionSet.Add(new OperationDefinition { Representation = "Fx55", Mnemonic = "LD", HasSource = true, HasTarget = false, HasFreeData = false, 

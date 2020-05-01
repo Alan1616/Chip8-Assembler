@@ -8,31 +8,36 @@ namespace DissAndAss.Assembly.Compiler
 {
     public class TokenToBinaryConverter : ITokenToBinaryConverter
     {
+        private int linesCount = 0;
 
         public ushort[] Compile(List<List<Token>> lines)
         {
             List<ushort> bytes = new List<ushort>();
-            var linesCount = 0;
+            linesCount = 0;
 
             foreach (List<Token> line in lines)
             {
-
                 linesCount++;
 
-                var lineWithoutComments = GetLineWithoutComments(line);             
+                var lineWithoutComments = GetLineWithoutComments(line);
                 if (lineWithoutComments.Count <= 1)
                 {
                     continue;
                 }
 
-                ushort currentOpcode = ConvertLineToBinaryData(lineWithoutComments, linesCount);
+                ushort currentOpcode = ConvertLineToBinaryData(lineWithoutComments);
                 bytes.Add(currentOpcode);
             }
 
             return bytes.ToArray();
         }
 
-        private ushort ConvertLineToBinaryData(List<Token> line, int linesCount)
+        private void ValidateLine(List<Token> line)
+        { 
+        
+        }
+
+        private ushort ConvertLineToBinaryData(List<Token> line)
         {
 
             if (line.Any(x => x.Type == TokenType.Invalid))
@@ -45,8 +50,6 @@ namespace DissAndAss.Assembly.Compiler
 
 
             var mnemonicMatchingOperations = OperationsSet.OperationDefinitionsSet.Where(x => x.Mnemonic == line[0].Value.ToUpper()).ToList();
-
-
             mnemonicMatchingOperations = mnemonicMatchingOperations.Where(x => LineMatchesTokenSetInGivenDefinition(x, line)).ToList();
 
             if (mnemonicMatchingOperations.Count() <= 0)

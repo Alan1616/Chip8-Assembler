@@ -15,7 +15,12 @@ namespace DissAndAss.Assembly
         public ushort FreeDataMaxLength
         {
             get => HasFreeData ? _freeDataMaxLength : (byte)0;
-            set { _freeDataMaxLength = value; }
+            set 
+            {
+                if (!HasFreeData)
+                    throw new Exception($"Can't set {nameof(FreeDataMaxLength)} if {nameof(HasFreeData)} is marked false");
+                _freeDataMaxLength = value; 
+            }
         }
         public string Mnemonic { get; set; }
         public List<TokenType> AssocietedTokenSet { get; set; }
